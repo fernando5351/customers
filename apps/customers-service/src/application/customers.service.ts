@@ -71,6 +71,19 @@ export class CustomersService {
     return toCustomerResponse(customer);
   }
 
+  async findByIdInternal(payload: GetCustomerByIdInput): Promise<CustomerResponse> {
+    const { id } = validatePayload(getCustomerByIdSchema, payload, {
+      message: 'Invalid customer lookup payload',
+    });
+    const customer = await this.customers.findByIdInternal(id);
+
+    if (!customer) {
+      throw new NotFoundException(`Customer ${id} was not found`);
+    }
+
+    return toCustomerResponse(customer);
+  }
+
   async update(
     payload: UpdateCustomerInput,
     companyContextId?: string | null,

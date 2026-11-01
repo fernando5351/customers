@@ -203,6 +203,19 @@ export class CustomersRepository {
     return this.loadCustomerForCompany(this.customers, id, companyId);
   }
 
+  async findByIdInternal(id: string): Promise<CustomerEntity | null> {
+    const customer = await this.customers.findOne({
+      where: { id, deletedAt: IsNull() },
+      relations: customerRelations,
+    });
+    if (customer) {
+      customer.companies = (customer.companies ?? []).filter(
+        (link) => link.isActive && !link.deletedAt,
+      );
+    }
+    return customer;
+  }
+
   async findByIdOrFail(id: string, companyId: string): Promise<CustomerEntity> {
     const customer = await this.findById(id, companyId);
 
