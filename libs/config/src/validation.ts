@@ -3,6 +3,7 @@ import * as Joi from 'joi';
 export const environmentValidationSchema = Joi.object({
   NODE_ENV: Joi.string().valid('development', 'test', 'production').default('development'),
   PORT: Joi.number().port().default(3000),
+  JWT_SECRET: Joi.string().min(32).required(),
   CORS_ORIGIN: Joi.string().allow('').default(''),
 
   DB_HOST: Joi.string().required(),
@@ -12,12 +13,7 @@ export const environmentValidationSchema = Joi.object({
   DB_NAME: Joi.string().required(),
   DB_SCHEMA: Joi.string().default('public'),
   DB_SSL: Joi.boolean().truthy('true').truthy('1').falsy('false').falsy('0').default(false),
-  DB_LOGGING: Joi.boolean()
-    .truthy('true')
-    .truthy('1')
-    .falsy('false')
-    .falsy('0')
-    .default(false),
+  DB_LOGGING: Joi.boolean().truthy('true').truthy('1').falsy('false').falsy('0').default(false),
   DB_POOL_MAX: Joi.number().integer().min(1).max(100).default(2),
 
   TCP_HOST: Joi.string().default('127.0.0.1'),
@@ -31,6 +27,7 @@ export const environmentValidationSchema = Joi.object({
 export type ValidatedEnvironment = {
   NODE_ENV: 'development' | 'test' | 'production';
   PORT: number;
+  JWT_SECRET: string;
   CORS_ORIGIN: string;
   DB_HOST: string;
   DB_PORT: number;

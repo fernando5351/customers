@@ -95,7 +95,11 @@ export class CreateCustomerTaxRoleAssignmentRequestDto {
   @ApiPropertyOptional({ example: '2026-12-31', nullable: true })
   validUntil?: string | null;
 
-  @ApiPropertyOptional({ example: 'Resolución emitida por Hacienda', maxLength: 250, nullable: true })
+  @ApiPropertyOptional({
+    example: 'Resolución emitida por Hacienda',
+    maxLength: 250,
+    nullable: true,
+  })
   verificationSource?: string | null;
 
   @ApiPropertyOptional({ example: '2026-08-07T10:30:00.000Z', nullable: true })
@@ -157,7 +161,12 @@ export class CreateCustomerRequestDto {
   @ApiPropertyOptional({ type: () => [CreateCustomerTaxRoleAssignmentRequestDto], default: [] })
   taxRoles?: CreateCustomerTaxRoleAssignmentRequestDto[] | null;
 
-  @ApiPropertyOptional({ type: () => [CreateCustomerCompanyRequestDto], default: [] })
+  @ApiPropertyOptional({
+    type: () => [CreateCustomerCompanyRequestDto],
+    deprecated: true,
+    description:
+      'Las asociaciones se toman de X-Company-Context; este campo no concede vínculos a otras empresas.',
+  })
   companies?: CreateCustomerCompanyRequestDto[] | null;
 }
 

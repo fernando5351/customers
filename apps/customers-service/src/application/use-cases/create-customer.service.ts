@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCustomerInput } from '../dto/customer.dto';
 import { CustomerEntity } from '../../domain/entities';
 import { CustomerFiscalValidator } from '../../domain/validators/customer-fiscal.validator';
@@ -13,10 +13,14 @@ export class CreateCustomerService {
     private readonly fiscalValidator: CustomerFiscalValidator,
   ) {}
 
-  async execute(input: CreateCustomerInput): Promise<CustomerEntity> {
+  async execute(input: CreateCustomerInput, companyId: string): Promise<CustomerEntity> {
+    if (!companyId?.trim()) {
+      throw new BadRequestException('Se requiere una empresa para registrar el cliente.');
+    }
+
     this.fiscalValidator.validate(input);
     await this.taxRoles.validate(input.taxRoles ?? []);
 
-    return this.customers.create(input);
+    return this.customers.create(input, companyId);
   }
 }

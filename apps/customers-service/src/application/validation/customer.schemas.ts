@@ -92,10 +92,8 @@ export const getCustomerByIdSchema = Joi.object<GetCustomerByIdInput>({
 
 export const updateCustomerSchema = Joi.object<UpdateCustomerInput>({
   id: uuid.required(),
-  nature: Joi.string()
-    .valid(...Object.values(CustomerNature)),
-  institutionalSector: Joi.string()
-    .valid(...Object.values(InstitutionalSector)),
+  nature: Joi.string().valid(...Object.values(CustomerNature)),
+  institutionalSector: Joi.string().valid(...Object.values(InstitutionalSector)),
   publicEntityType: Joi.string()
     .valid(...Object.values(PublicEntityType))
     .allow(null),
@@ -110,11 +108,10 @@ export const updateCustomerSchema = Joi.object<UpdateCustomerInput>({
   identifications: Joi.array().items(identificationSchema),
   taxProfile: taxProfileSchema.allow(null),
   taxRoles: Joi.array().items(taxRoleSchema),
-  companies: Joi.array().items(companySchema),
 });
 
 export const listCustomersSchema = Joi.object<ListCustomersInput>({
-  companyId: uuid.allow(null),
+  companyId: uuid.required(),
   search: Joi.string().trim().max(200).allow(null, ''),
   nature: Joi.string()
     .valid(...Object.values(CustomerNature))

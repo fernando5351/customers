@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TakumiConfigModule } from '@takumi/config';
+import { CustomerCompanyContextGuard } from '@takumi/common';
+import { TakumiConfig, TakumiConfigModule } from '@takumi/config';
 import { DatabaseModule } from '@takumi/database';
 import { CustomersService } from './application/customers.service';
 import {
@@ -27,6 +30,13 @@ import { TaxRolesRpcController } from './transport/rpc/tax-roles-rpc.controller'
   imports: [
     TakumiConfigModule,
     DatabaseModule,
+    JwtModule.registerAsync({
+      imports: [TakumiConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<TakumiConfig>) => ({
+        secret: configService.getOrThrow('jwtSecret', { infer: true }),
+      }),
+    }),
     TypeOrmModule.forFeature([
       CustomerEntity,
       CustomerIdentificationEntity,
@@ -51,6 +61,7 @@ import { TaxRolesRpcController } from './transport/rpc/tax-roles-rpc.controller'
     CustomerFiscalValidator,
     CustomersRepository,
     TaxRolesRepository,
+    CustomerCompanyContextGuard,
   ],
 })
 export class CustomersModule {}

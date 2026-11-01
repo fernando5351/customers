@@ -81,7 +81,7 @@ export type ListCustomersInput = {
 };
 
 export type NormalizedListCustomersInput = {
-  companyId: string | null;
+  companyId: string;
   search: string | null;
   nature: CustomerNature | null;
   isActive: boolean | null;

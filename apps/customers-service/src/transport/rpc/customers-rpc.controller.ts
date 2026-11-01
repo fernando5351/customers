@@ -9,6 +9,11 @@ import {
   UpdateCustomerInput,
 } from '../../application/dto/customer.dto';
 
+type CompanyScopedPayload<T> = {
+  data: T;
+  companyId?: string | null;
+};
+
 @Controller()
 export class CustomersRpcController {
   constructor(private readonly customers: CustomersService) {}
@@ -19,22 +24,22 @@ export class CustomersRpcController {
   }
 
   @MessagePattern(MESSAGE_PATTERNS.customers.create)
-  create(@Payload() payload: CreateCustomerInput) {
-    return this.customers.create(payload);
+  create(@Payload() payload: CompanyScopedPayload<CreateCustomerInput>) {
+    return this.customers.create(payload.data, payload.companyId);
   }
 
   @MessagePattern(MESSAGE_PATTERNS.customers.update)
-  update(@Payload() payload: UpdateCustomerInput) {
-    return this.customers.update(payload);
+  update(@Payload() payload: CompanyScopedPayload<UpdateCustomerInput>) {
+    return this.customers.update(payload.data, payload.companyId);
   }
 
   @MessagePattern(MESSAGE_PATTERNS.customers.findById)
-  findById(@Payload() payload: GetCustomerByIdInput) {
-    return this.customers.findById(payload);
+  findById(@Payload() payload: CompanyScopedPayload<GetCustomerByIdInput>) {
+    return this.customers.findById(payload.data, payload.companyId);
   }
 
   @MessagePattern(MESSAGE_PATTERNS.customers.list)
-  list(@Payload() payload: ListCustomersInput) {
-    return this.customers.list(payload);
+  list(@Payload() payload: CompanyScopedPayload<ListCustomersInput>) {
+    return this.customers.list(payload.data, payload.companyId);
   }
 }

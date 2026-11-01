@@ -5,6 +5,7 @@ export type NodeEnvironment = 'development' | 'test' | 'production';
 export type TakumiConfig = {
   nodeEnv: NodeEnvironment;
   port: number;
+  jwtSecret: string;
   corsOrigins: string[];
   database: {
     host: string;
@@ -34,6 +35,7 @@ export function readAppConfig(source = process.env): TakumiConfig {
   return {
     nodeEnv: env.NODE_ENV,
     port: env.PORT,
+    jwtSecret: env.JWT_SECRET,
     corsOrigins: readList(env.CORS_ORIGIN),
     database: {
       host: env.DB_HOST,

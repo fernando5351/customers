@@ -1,6 +1,26 @@
-import { Body, Controller, Get, Inject, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { MESSAGE_PATTERNS, sendRpc, SERVICE_NAMES } from '@takumi/common';
+import {
+  CustomerCompanyContextGuard,
+  MESSAGE_PATTERNS,
+  sendRpc,
+  SERVICE_NAMES,
+} from '@takumi/common';
+
+type CompanyContextRequest = {
+  companyContextId: string;
+};
 
 @Controller('customers')
 export class CustomersGatewayController {
@@ -11,26 +31,43 @@ export class CustomersGatewayController {
     return sendRpc(this.customers, MESSAGE_PATTERNS.customers.health, {});
   }
 
+  @UseGuards(CustomerCompanyContextGuard)
   @Post()
-  create(@Body() body: unknown) {
-    return sendRpc(this.customers, MESSAGE_PATTERNS.customers.create, body);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() body: Record<string, unknown>) {
-    return sendRpc(this.customers, MESSAGE_PATTERNS.customers.update, {
-      ...body,
-      id,
+  create(@Body() body: unknown, @Req() request: CompanyContextRequest) {
+    return sendRpc(this.customers, MESSAGE_PATTERNS.customers.create, {
+      data: body,
+      companyId: request.companyContextId,
     });
   }
 
-  @Get()
-  list(@Query() query: Record<string, unknown>) {
-    return sendRpc(this.customers, MESSAGE_PATTERNS.customers.list, query);
+  @UseGuards(CustomerCompanyContextGuard)
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() body: Record<string, unknown>,
+    @Req() request: CompanyContextRequest,
+  ) {
+    return sendRpc(this.customers, MESSAGE_PATTERNS.customers.update, {
+      data: { ...body, id },
+      companyId: request.companyContextId,
+    });
   }
 
+  @UseGuards(CustomerCompanyContextGuard)
+  @Get()
+  list(@Query() query: Record<string, unknown>, @Req() request: CompanyContextRequest) {
+    return sendRpc(this.customers, MESSAGE_PATTERNS.customers.list, {
+      data: query,
+      companyId: request.companyContextId,
+    });
+  }
+
+  @UseGuards(CustomerCompanyContextGuard)
   @Get(':id')
-  findById(@Param('id') id: string) {
-    return sendRpc(this.customers, MESSAGE_PATTERNS.customers.findById, { id });
+  findById(@Param('id') id: string, @Req() request: CompanyContextRequest) {
+    return sendRpc(this.customers, MESSAGE_PATTERNS.customers.findById, {
+      data: { id },
+      companyId: request.companyContextId,
+    });
   }
 }
