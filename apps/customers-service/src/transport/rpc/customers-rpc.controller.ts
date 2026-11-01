@@ -38,6 +38,11 @@ export class CustomersRpcController {
     return this.customers.findById(payload.data, payload.companyId);
   }
 
+  @MessagePattern(MESSAGE_PATTERNS.customers.internalById)
+  internalById(@Payload() payload: GetCustomerByIdInput) {
+    return this.customers.findByIdInternal(payload);
+  }
+
   @MessagePattern(MESSAGE_PATTERNS.customers.list)
   list(@Payload() payload: CompanyScopedPayload<ListCustomersInput>) {
     return this.customers.list(payload.data, payload.companyId);

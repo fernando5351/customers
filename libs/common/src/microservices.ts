@@ -9,6 +9,7 @@ export const SERVICE_NAMES = {
 export const MESSAGE_PATTERNS = {
   customers: {
     health: 'customers.health',
+    internalById: 'customers.internal.findById',
     create: 'customers.create',
     update: 'customers.update',
     findById: 'customers.findById',

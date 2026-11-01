@@ -2,12 +2,18 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
-import { CustomerCompanyContextGuard, SERVICE_NAMES, tcpClientOptions } from '@takumi/common';
+import {
+  CustomerCompanyContextGuard,
+  InternalApiKeyGuard,
+  SERVICE_NAMES,
+  tcpClientOptions,
+} from '@takumi/common';
 import { TakumiConfig, TakumiConfigModule } from '@takumi/config';
 import { DatabaseModule } from '@takumi/database';
 import { CustomersGatewayController } from './customers-gateway.controller';
 import { HealthController } from './health.controller';
 import { HealthService } from './health.service';
+import { InternalCustomersGatewayController } from './internal-customers-gateway.controller';
 import { TaxRolesGatewayController } from './tax-roles-gateway.controller';
 
 @Module({
@@ -32,7 +38,12 @@ import { TaxRolesGatewayController } from './tax-roles-gateway.controller';
       },
     ]),
   ],
-  controllers: [HealthController, TaxRolesGatewayController, CustomersGatewayController],
-  providers: [HealthService, CustomerCompanyContextGuard],
+  controllers: [
+    HealthController,
+    TaxRolesGatewayController,
+    CustomersGatewayController,
+    InternalCustomersGatewayController,
+  ],
+  providers: [HealthService, CustomerCompanyContextGuard, InternalApiKeyGuard],
 })
 export class ApiGatewayModule {}
